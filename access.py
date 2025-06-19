@@ -33,7 +33,32 @@ db.init_app(app)
 # root level routes
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  msg = {"message":"access /login endpoint to utilize authentication service"}
+  msg = [
+    {
+      'endpoint': 'index (/)',
+      'endpoint_description': 'provides simple documentation for endpoints',
+      'required_entries': 'None',
+      'returned_data': 'None',
+    },
+    {
+      'endpoint': 'login (/login)',
+      'endpoint_description': 'validates end user login and provides session data back to pyGameFlix',
+      'required_entries': 'None',
+      'returned_data': 'None',
+    },
+    {
+      'endpoint': 'logout (/logout)',
+      'endpoint_description': 'terminates end user session within pyGameFlix',
+      'required_entries': 'None',
+      'returned_data': 'None',
+    },
+    {
+      'endpoint': 'register (/register)',
+      'endpoint_description': 'registers new pyGameFlix end user',
+      'required_entries': 'None',
+      'returned_data': 'None',
+    },
+  ]
   return jsonify(msg)
   
 @app.route('/login', methods=['GET', 'POST'])
