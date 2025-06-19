@@ -1,0 +1,12 @@
+.env
+.idea
+.venv
+**/__*__/
+bin
+include
+lib
+lib64
+**/__*__.py
+**/*.pyc
+!**/__init__.py
+pyvenv.cfg
