@@ -1,7 +1,6 @@
 # access.py
 
 # local imports
-import seed_data
 from models import db
 # external imports
 from dotenv import load_dotenv
@@ -33,17 +32,24 @@ db.init_app(app)
 
 # root level routes
 @app.route('/', methods=['GET', 'POST'])
+def index():
+  msg = {"message":"access /login endpoint to utilize authentication service"}
+  return jsonify(msg)
+  
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-  return "login"
+  msg = {"message":"/login endpoint accessed"}
+  return jsonify(msg)
 
 @app.route('/logout')
 def logout():
-  session.clear()  # Wipe out user and its token cache from session
-  return redirect(url_for("login"))
+  msg = {"message":"/logout endpoint accessed"}
+  return jsonify(msg)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-  return "register"
+  msg = {"message":"/register endpoint accessed"}
+  return jsonify(msg)
 
 if __name__ == '__main__':
   if venv_var is not None:
