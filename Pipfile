@@ -8,6 +8,8 @@ flask = "*"
 dotenv = "*"
 flask-sqlalchemy = "*"
 psycopg2-binary = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 
