@@ -31,7 +31,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db.init_app(app)
 
 # root level routes
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
   msg = [
     {
