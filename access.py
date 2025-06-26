@@ -1,10 +1,10 @@
 # access.py
 
 # local imports
-from models import db
+from models import db, users
 # external imports
 from dotenv import load_dotenv
-from flask import Flask, jsonify, session
+from flask import Flask, jsonify, request, session
 import logging
 import os
 
@@ -27,7 +27,7 @@ else:
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-### Database settings
+# Database settings
 db.init_app(app)
 
 # root level routes
@@ -71,9 +71,32 @@ def logout():
   msg = {"message":"/logout endpoint accessed"}
   return jsonify(msg)
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['POST'])
 def register():
-  msg = {"message":"/register endpoint accessed"}
+  first_name = request.json['first_name']
+  last_name = request.json['last_name']
+  email = request.json['email']
+  address = request.json['address']
+  city = request.json['city']
+  state = request.json['state']
+  zip_code = request.json['zip_code']
+  password = request.json['password']
+  subscription_id = request.json['subscription_id']
+  access_level = request.json['access_level']
+  newUser = users(first_name, last_name, email, address, city, state, zip_code, password, subscription_id, access_level)
+  db.session.add(newUser)
+  db.session.commit()
+  msg = {
+    'first_name': first_name,
+    'last_name': last_name,
+    'email': email,
+    'address': address,
+    'city': city,
+    'state': state,
+    'zip_code': zip_code,
+    'subscription_id': subscription_id,
+    'access_level': access_level,
+  }
   return jsonify(msg)
 
 if __name__ == '__main__':
