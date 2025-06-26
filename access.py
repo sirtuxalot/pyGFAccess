@@ -63,7 +63,26 @@ def index():
   
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-  msg = {"message":"/login endpoint accessed"}
+  email = request.json['email']
+  password = request.json['password']
+  userProfile = users.query.filter_by(email=email).first()
+  logging.debug(userProfile)
+  if userProfile is None or password != userProfile.password:
+    msg = {
+      'UNAUTHORIZED': 'Invalid credentials provided!'
+    }
+  else:
+    msg = {
+      'first_name': userProfile.first_name,
+      'last_name': userProfile.last_name,
+      'email': userProfile.email,
+      'address': userProfile.address,
+      'city': userProfile.city,
+      'state': userProfile.state,
+      'zip_code': userProfile.zip_code,
+      'subscription_id': userProfile.subscription_id,
+      'access_level': userProfile.access_level,
+    }
   return jsonify(msg)
 
 @app.route('/logout')
