@@ -61,7 +61,7 @@ def index():
   ]
   return jsonify(msg)
   
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
   email = request.json['email']
   password = request.json['password']
