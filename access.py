@@ -63,15 +63,22 @@ def index():
   
 @app.route('/login', methods=['POST'])
 def login():
+  # map email and encryped password from incoming json to function variables
   email = request.json['email']
   password = request.json['password']
+  # retrieve user prfile from users table by unique email address
   userProfile = users.query.filter_by(email=email).first()
-  logging.debug(userProfile)
+  logging.debug("USER_ID: %s" % (userProfile.user_id))
+  # test for empty user profile and compare encrypted password versus stored password
   if userProfile is None or password != userProfile.password:
+    # login failed
     msg = {
       'UNAUTHORIZED': 'Invalid credentials provided!'
     }
   else:
+    # login passed
+
+    # build json message to return to pyGameFlix
     msg = {
       'first_name': userProfile.first_name,
       'last_name': userProfile.last_name,
@@ -92,6 +99,7 @@ def logout():
 
 @app.route('/register', methods=['POST'])
 def register():
+  # map incoming json to function variables
   first_name = request.json['first_name']
   last_name = request.json['last_name']
   email = request.json['email']
@@ -102,9 +110,12 @@ def register():
   password = request.json['password']
   subscription_id = request.json['subscription_id']
   access_level = request.json['access_level']
+  # create newUser variable with users table using function variables
   newUser = users(first_name, last_name, email, address, city, state, zip_code, password, subscription_id, access_level)
+  # add and commit newUser variable to database
   db.session.add(newUser)
   db.session.commit()
+  # build json message to return to pyGameFlix
   msg = {
     'first_name': first_name,
     'last_name': last_name,
