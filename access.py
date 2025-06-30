@@ -68,18 +68,19 @@ def login():
   password = request.json['password']
   # retrieve user prfile from users table by unique email address
   userProfile = users.query.filter_by(email=email).first()
-  logging.debug("USER_ID: %s" % (userProfile.user_id))
   # test for empty user profile and compare encrypted password versus stored password
   if userProfile is None or password != userProfile.password:
     # login failed
     msg = {
-      'UNAUTHORIZED': 'Invalid credentials provided!'
+      'message': 'UNAUTHORIZED: Invalid credentials provided!'
     }
   else:
+    logging.debug("USER_ID: %s" % (userProfile.user_id))
     # login passed
 
     # build json message to return to pyGameFlix
     msg = {
+      'message': 'SUCCESS: User credentials authenticated',
       'first_name': userProfile.first_name,
       'last_name': userProfile.last_name,
       'email': userProfile.email,
