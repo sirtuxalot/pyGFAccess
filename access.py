@@ -80,7 +80,7 @@ def login():
 
     # build json message to return to pyGameFlix
     msg = {
-      'message': 'SUCCESS: User credentials authenticated',
+      'message': 'SUCCESS: User credentials authenticated!',
       'first_name': userProfile.first_name,
       'last_name': userProfile.last_name,
       'email': userProfile.email,
@@ -111,23 +111,31 @@ def register():
   password = request.json['password']
   subscription_id = request.json['subscription_id']
   access_level = request.json['access_level']
-  # create newUser variable with users table using function variables
-  newUser = users(first_name, last_name, email, address, city, state, zip_code, password, subscription_id, access_level)
-  # add and commit newUser variable to database
-  db.session.add(newUser)
-  db.session.commit()
-  # build json message to return to pyGameFlix
-  msg = {
-    'first_name': first_name,
-    'last_name': last_name,
-    'email': email,
-    'address': address,
-    'city': city,
-    'state': state,
-    'zip_code': zip_code,
-    'subscription_id': subscription_id,
-    'access_level': access_level,
-  }
+  # re-enforce prevention of duplicate emails by checking before adding uses
+  emailVerification = users.query.filter_by(email=email).first()
+  if emailVerification is None:
+    # create newUser variable with users table using function variables
+    newUser = users(first_name, last_name, email, address, city, state, zip_code, password, subscription_id, access_level)
+    # add and commit newUser variable to database
+    db.session.add(newUser)
+    db.session.commit()
+    # build json message to return to pyGameFlix
+    msg = {
+      'message': 'SUCCESS: User successfully registered!',
+      'first_name': first_name,
+      'last_name': last_name,
+      'email': email,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip_code': zip_code,
+      'subscription_id': subscription_id,
+      'access_level': access_level,
+    }
+  else:
+    msg = {
+      'message': 'UNAUTHORIZED: Provided Email already exists!'
+    }
   return jsonify(msg)
 
 if __name__ == '__main__':
