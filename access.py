@@ -5,6 +5,7 @@ from models import db, users
 # external imports
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, session
+from flask_bcrypt import Bcrypt
 import logging
 import os
 
@@ -13,6 +14,7 @@ load_dotenv()
 
 # application settings
 app = Flask(__name__)
+bcrypt = Bcrypt()
 
 # checking for virtual environment
 venv_var = os.getenv('VIRTUAL_ENV', default=None)
@@ -68,8 +70,8 @@ def login():
   password = request.json['password']
   # retrieve user prfile from users table by unique email address
   userProfile = users.query.filter_by(email=email).first()
-  # test for empty user profile and compare encrypted password versus stored password
-  if userProfile is None or password != userProfile.password:
+  # test for empty user profile and compare incoming password versus stored password
+  if userProfile is None or (bcrypt.check_password_hash(password.encode('utf-8'), userProfile.password.encode('utf-8'))):
     # login failed
     msg = {
       'message': 'UNAUTHORIZED: Invalid credentials provided!'
