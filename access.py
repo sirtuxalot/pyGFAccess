@@ -37,28 +37,28 @@ db.init_app(app)
 def index():
   msg = [
     {
-      'endpoint': 'index (/)',
-      'endpoint_description': 'provides simple documentation for endpoints',
-      'required_entries': 'None',
-      'returned_data': 'None',
+      'endpoint': 'GET /',
+      'endpoint_description': 'utilizes the index function that just provides simple documentation of the microservice endpoints',
+      'required_data': 'None',
+      'returns': 'a JSON object with this information as documentation',
     },
     {
-      'endpoint': 'login (/login)',
-      'endpoint_description': 'validates end user login and provides session data back to pyGameFlix',
-      'required_entries': 'None',
-      'returned_data': 'None',
+      'endpoint': 'POST /login',
+      'endpoint_description': 'utilizes the login function which validates the user and provides user profile data back to pyGameFlix',
+      'required_data': 'a JSON object with users email and encrypted password',
+      'returns': 'a JSON object with users profile data',
     },
     {
-      'endpoint': 'logout (/logout)',
-      'endpoint_description': 'terminates end user session within pyGameFlix',
-      'required_entries': 'None',
-      'returned_data': 'None',
+      'endpoint': 'GET /logout',
+      'endpoint_description': 'utilizes the logout function which terminates the end user session within pyGameFlix',
+      'required_data': 'TBD',
+      'returns': 'TBD',
     },
     {
-      'endpoint': 'register (/register)',
-      'endpoint_description': 'registers new pyGameFlix end user',
-      'required_entries': 'None',
-      'returned_data': 'None',
+      'endpoint': 'POST /register',
+      'endpoint_description': 'utilizes the register function that receives the provided end user profile information and password and populates the users table within the pyGameFlix database',
+      'required_data': 'a JSON object with the end users profile information and password',
+      'returns': 'a JSON object with the end users profile information',
     },
   ]
   return jsonify(msg)
