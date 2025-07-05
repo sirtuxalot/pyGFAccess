@@ -76,6 +76,7 @@ def login():
     msg = {
       'message': 'UNAUTHORIZED: Invalid credentials provided!'
     }
+    return_code = 400
   else:
     logging.debug("USER_ID: %s" % (userProfile.user_id))
     # login passed
@@ -93,7 +94,8 @@ def login():
       'subscription_id': userProfile.subscription_id,
       'access_level': userProfile.access_level,
     }
-  return jsonify(msg)
+    return_code = 200
+  return jsonify(msg), return_code
 
 @app.route('/logout')
 def logout():
@@ -134,11 +136,13 @@ def register():
       'subscription_id': subscription_id,
       'access_level': access_level,
     }
+    return_code = 201
   else:
     msg = {
       'message': 'UNAUTHORIZED: Provided Email already exists!'
     }
-  return jsonify(msg)
+    return_code = 409
+  return jsonify(msg), return_code
 
 if __name__ == '__main__':
   if venv_var is not None:
