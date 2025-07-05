@@ -3,9 +3,13 @@
 # local imports
 from models import db, users
 # external imports
+from cryptography.hazmat.primitives import serialization
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, session
 from flask_bcrypt import Bcrypt
+import jwt
+from pathlib import Path
 import logging
 import os
 
@@ -31,6 +35,21 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # Database settings
 db.init_app(app)
+
+def create_jwt():
+  now = datetime.utcnow()
+  payload = {
+    'iss': 'http://pygameflix.io',
+    'sub': os.urandom(24).decode('ISO-8859-1'),
+    'iat': now,
+    'exp': (now + timedelta(hours=24)).timestamp(),
+  }
+  logging.debug(payload)
+  private_key_text = Path("keys/private_key.pem").read_text()
+  private_key = serialization.load_pem_private_key(
+    private_key_text.encode(), password=None
+  )
+  return jwt.encode(payload=payload, key=private_key, algorithm="RS256")
 
 # root level routes
 @app.route('/')
@@ -62,7 +81,7 @@ def index():
     },
   ]
   return jsonify(msg)
-  
+
 @app.route('/login', methods=['POST'])
 def login():
   # map email and encryped password from incoming json to function variables
@@ -78,9 +97,8 @@ def login():
     }
     return_code = 400
   else:
-    logging.debug("USER_ID: %s" % (userProfile.user_id))
     # login passed
-
+    logging.debug("USER_ID: %s" % (userProfile.user_id))
     # build json message to return to pyGameFlix
     msg = {
       'message': 'SUCCESS: User credentials authenticated!',
@@ -93,6 +111,7 @@ def login():
       'zip_code': userProfile.zip_code,
       'subscription_id': userProfile.subscription_id,
       'access_level': userProfile.access_level,
+      'jwt_token': create_jwt()
     }
     return_code = 200
   return jsonify(msg), return_code
