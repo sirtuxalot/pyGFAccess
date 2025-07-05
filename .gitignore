@@ -1,6 +1,7 @@
 .env
 .idea
 .venv
+keys
 **/__*__/
 bin
 include
