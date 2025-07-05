@@ -44,7 +44,6 @@ def create_jwt():
     'iat': now,
     'exp': (now + timedelta(hours=24)).timestamp(),
   }
-  logging.debug(payload)
   private_key_text = Path("keys/private_key.pem").read_text()
   private_key = serialization.load_pem_private_key(
     private_key_text.encode(), password=None
