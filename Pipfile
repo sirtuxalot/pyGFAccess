@@ -12,6 +12,7 @@ pyjwt = "*"
 cryptography = "*"
 flask-bcrypt = "*"
 bcrypt = "*"
+uwsgi = "*"
 
 [dev-packages]
 
