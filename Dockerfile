@@ -1,11 +1,14 @@
 ### base image
 FROM python:3.13.5-alpine3.22
 
+### create directory structure
+RUN mkdir -p /pyGFAccess/keys
+
 ### set work directory
 WORKDIR /pyGFAccess
 
 ### copy pyGFAccess files
-COPY ./keys /pyGameFlix/keys/
+COPY ./keys/private_key.pem /pyGFAccess/keys/
 COPY .env access.py models.py uwsgi.ini requirements.txt entrypoint.sh /pyGFAccess/
 
 ### install required packages
