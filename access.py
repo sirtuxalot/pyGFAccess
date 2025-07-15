@@ -96,8 +96,6 @@ def login():
     }
     return_code = 400
   else:
-    # login passed
-    logging.debug("USER_ID: %s" % (userProfile.user_id))
     # build json message to return to pyGameFlix
     msg = {
       'message': 'SUCCESS: User credentials authenticated!',
