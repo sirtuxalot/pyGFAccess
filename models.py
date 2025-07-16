@@ -4,7 +4,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
 # Initialize the database
-db=SQLAlchemy()
+db = SQLAlchemy()
 
 # Subscriptions model
 class subscriptions(db.Model):

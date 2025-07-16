@@ -6,7 +6,7 @@ from models import db, users
 from cryptography.hazmat.primitives import serialization
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request
 from flask_bcrypt import Bcrypt
 import jwt
 from pathlib import Path
@@ -27,7 +27,7 @@ if venv_var is not None:
   logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
   logging.info('***** Debug Logging: on *****')
 else:
-  logging.basicConfig=logging.INFO
+  logging.basicConfig = logging.INFO
 
 # database connection setup
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
@@ -56,13 +56,13 @@ def index():
   msg = [
     {
       'endpoint': 'GET /',
-      'endpoint_description': 'utilizes the index function that just provides simple documentation of the microservice endpoints',
+      'endpoint_description': 'utilizes the index function that just provides simple documentation of the microservice endpoints',  # noqa: E501
       'required_data': 'None',
       'returns': 'a JSON object with this information as documentation',
     },
     {
       'endpoint': 'POST /login',
-      'endpoint_description': 'utilizes the login function which validates the user and provides user profile data back to pyGameFlix',
+      'endpoint_description': 'utilizes the login function which validates the user and provides user profile data back to pyGameFlix',  # noqa: E501
       'required_data': 'a JSON object with users email and encrypted password',
       'returns': 'a JSON object with users profile data',
     },
@@ -74,7 +74,7 @@ def index():
     },
     {
       'endpoint': 'POST /register',
-      'endpoint_description': 'utilizes the register function that receives the provided end user profile information and password and populates the users table within the pyGameFlix database',
+      'endpoint_description': 'utilizes the register function that receives the provided end user profile information and password and populates the users table within the pyGameFlix database',  # noqa: E501
       'required_data': 'a JSON object with the end users profile information and password',
       'returns': 'a JSON object with the end users profile information',
     },
@@ -115,7 +115,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-  msg = {"message":"/logout endpoint accessed"}
+  msg = {"message": "/logout endpoint accessed"}
   return jsonify(msg)
 
 @app.route('/register', methods=['POST'])
@@ -162,6 +162,6 @@ def register():
 
 if __name__ == '__main__':
   if venv_var is not None:
-    app.run(debug=True, port=5001) 
+    app.run(debug=True, port=5001)
   else:
     app.run(port=5001)
