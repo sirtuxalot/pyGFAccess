@@ -13,6 +13,7 @@ cryptography = "*"
 flask-bcrypt = "*"
 bcrypt = "*"
 uwsgi = "*"
+pytest = "*"
 
 [dev-packages]
 
