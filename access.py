@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives import serialization
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
+from flask_bcrypt import Bcrypt
 import jwt
 from pathlib import Path
 import logging
@@ -17,6 +18,7 @@ load_dotenv()
 
 # application settings
 app = Flask(__name__)
+bcrypt = Bcrypt()
 
 # checking for virtual environment
 venv_var = os.getenv('VIRTUAL_ENV', default=None)
@@ -87,7 +89,7 @@ def login():
   # retrieve user prfile from users table by unique email address
   userProfile = users.query.filter_by(email=email).first()
   # test for empty user profile and compare incoming password versus stored password
-  if userProfile is None or (password.encode('utf-8') != userProfile.password.encode('utf-8')):
+  if userProfile is None or (bcrypt.check_password_hash(password.encode('utf-8'), userProfile.password.encode('utf-8'))):
     # login failed
     msg = {
       'message': 'UNAUTHORIZED: Invalid credentials provided!'
