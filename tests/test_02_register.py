@@ -3,9 +3,8 @@ import json
 
 # Register
 
-#def test_register_success(register_fix):
 def test_register_success():
-  """Make sure we get an expected response from workboard list index route"""
+  """This will register a new user to the application"""
   data =  {
     "first_name": "Sadie",
     "last_name": "Yeomans",
@@ -26,9 +25,8 @@ def test_register_success():
   assert response.status_code == 201
   assert b'{"access_level":99,"address":"next county over","city":"Lawton","email":"sy0623@mail.io","first_name":"Sadie","last_name":"Yeomans","message":"SUCCESS: User successfully registered!","state":"Oklahoma","subscription_id":4,"zip_code":"73452"}\n' in response.data
 
-#def test_register_failure_dup_email(register_fix):
 def test_register_failure_dup_email():
-  """Make sure we get an expected response from archived jobs list index route"""
+  """This will registration attempt will fail since there is an existing email in the users table"""
   data =  {
     "first_name": "Ruby",
     "last_name": "Yeomans",
