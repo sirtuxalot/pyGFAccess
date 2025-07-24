@@ -149,14 +149,16 @@ def register():
   city = request.json['city']
   state = request.json['state']
   zip_code = request.json['zip_code']
-  password = request.json['password']
+  password = decrypt_password(request.json['password'], load_private_key())
   subscription_id = request.json['subscription_id']
   access_level = request.json['access_level']
   # re-enforce prevention of duplicate emails by checking before adding uses
   emailVerification = users.query.filter_by(email=email).first()
   if emailVerification is None:
+    # decode password for database storage
+    decoded_password = bcrypt.generate_password_hash(password).decode('utf-8')
     # create newUser variable with users table using function variables
-    newUser = users(first_name, last_name, email, address, city, state, zip_code, password, subscription_id, access_level)
+    newUser = users(first_name, last_name, email, address, city, state, zip_code, decoded_password, subscription_id, access_level)
     # add and commit newUser variable to database
     db.session.add(newUser)
     db.session.commit()
