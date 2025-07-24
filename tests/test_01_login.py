@@ -12,11 +12,13 @@ import json
 
 # support functions
 
+"""Read public key to encrypt the outgoing string"""
 def load_public_key():
   with open('keys/public_key.pem', 'rb') as pem_file:
     public_key = serialization.load_pem_public_key(pem_file.read())
   return public_key
 
+"""Encrypt the ougoing password"""
 def encrypt_password(message, public_key):
   encrypted = public_key.encrypt(message.encode('utf-8'), padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
   return base64.b64encode(encrypted).decode('utf-8')
@@ -34,8 +36,6 @@ def test_login_success():
     data=json.dumps(data),
     headers={"Content-Type": "application/json"}
   )
-#  assert response.status_code == 400
-#  assert b'{"message":"UNAUTHORIZED: 001 - Invalid credentials provided!"}\n' in response.data
   assert response.status_code == 200
   assert json.loads(response.data)["email"] == data["email"]
   assert json.loads(response.data)["first_name"] == "Test"
