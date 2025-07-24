@@ -3,7 +3,9 @@
 # local imports
 from models import db, users
 # external imports
-from cryptography.hazmat.primitives import serialization
+import base64
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
@@ -36,6 +38,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # Database settings
 db.init_app(app)
 
+# support functions
+
 def create_jwt():
   now = datetime.now(timezone.utc)
   payload = {
@@ -50,7 +54,18 @@ def create_jwt():
   )
   return jwt.encode(payload=payload, key=private_key, algorithm="RS256")
 
+def load_private_key(password=None):
+  with open('keys/private_key.pem', 'rb') as pem_file:
+    private_key = serialization.load_pem_private_key(pem_file.read(), password=password.encode() if password else None)
+    return private_key
+
+def decrypt_password(encrypted_b64, private_key):
+  encrypted = base64.b64decode(encrypted_b64.encode('utf-8'))
+  decrypted = private_key.decrypt(encrypted, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
+  return decrypted.decode('utf-8')
+
 # root level routes
+
 @app.route('/')
 def index():
   msg = [
@@ -85,32 +100,38 @@ def index():
 def login():
   # map email and encryped password from incoming json to function variables
   email = request.json['email']
-  password = request.json['password']
+  password = decrypt_password(request.json['password'], load_private_key())
   # retrieve user prfile from users table by unique email address
   userProfile = users.query.filter_by(email=email).first()
   # test for empty user profile and compare incoming password versus stored password
-  if userProfile is None or (bcrypt.check_password_hash(password.encode('utf-8'), userProfile.password.encode('utf-8'))):
+  if userProfile is not None:
+    if bcrypt.check_password_hash(userProfile.password, password):
+      # build json message to return to pyGameFlix
+      msg = {
+        'message': 'SUCCESS: User credentials authenticated!',
+        'first_name': userProfile.first_name,
+        'last_name': userProfile.last_name,
+        'email': userProfile.email,
+        'address': userProfile.address,
+        'city': userProfile.city,
+        'state': userProfile.state,
+        'zip_code': userProfile.zip_code,
+        'subscription_id': userProfile.subscription_id,
+        'access_level': userProfile.access_level,
+        'jwt_token': create_jwt()
+      }
+      return_code = 200
+    else:  
+      msg = {
+        'message': 'UNAUTHORIZED: 002 - Invalid credentials provided!'
+      }
+      return_code = 400
+  else:
     # login failed
     msg = {
-      'message': 'UNAUTHORIZED: Invalid credentials provided!'
+      'message': 'UNAUTHORIZED: 001 - Invalid credentials provided!'
     }
     return_code = 400
-  else:
-    # build json message to return to pyGameFlix
-    msg = {
-      'message': 'SUCCESS: User credentials authenticated!',
-      'first_name': userProfile.first_name,
-      'last_name': userProfile.last_name,
-      'email': userProfile.email,
-      'address': userProfile.address,
-      'city': userProfile.city,
-      'state': userProfile.state,
-      'zip_code': userProfile.zip_code,
-      'subscription_id': userProfile.subscription_id,
-      'access_level': userProfile.access_level,
-      'jwt_token': create_jwt()
-    }
-    return_code = 200
   return jsonify(msg), return_code
 
 @app.route('/logout')
