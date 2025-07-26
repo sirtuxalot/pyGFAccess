@@ -109,6 +109,7 @@ def login():
       # build json message to return to pyGameFlix
       msg = {
         'message': 'SUCCESS: User credentials authenticated!',
+        'user_id': userProfile.user_id,
         'first_name': userProfile.first_name,
         'last_name': userProfile.last_name,
         'email': userProfile.email,
@@ -118,7 +119,7 @@ def login():
         'zip_code': userProfile.zip_code,
         'subscription_id': userProfile.subscription_id,
         'access_level': userProfile.access_level,
-        'jwt_token': create_jwt()
+        'jwt_token': create_jwt(),
       }
       return_code = 200
     else:  
