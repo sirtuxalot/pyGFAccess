@@ -8,8 +8,6 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 import json
 
-# application settings
-
 # support functions
 
 """Read public key to encrypt the outgoing string"""
