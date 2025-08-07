@@ -10,13 +10,13 @@ import json
 
 # support functions
 
-"""Read public key to encrypt the outgoing string"""
+""" Read public key to encrypt the outgoing string """
 def load_public_key():
   with open('keys/public_key.pem', 'rb') as pem_file:
     public_key = serialization.load_pem_public_key(pem_file.read())
   return public_key
 
-"""Encrypt the ougoing password"""
+""" Encrypt the ougoing password """
 def encrypt_password(message, public_key):
   encrypted = public_key.encrypt(message.encode('utf-8'), padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
   return base64.b64encode(encrypted).decode('utf-8')
@@ -24,7 +24,7 @@ def encrypt_password(message, public_key):
 # Register
 
 def test_register_success():
-  """This will register a new user to the application"""
+  """ This will register a new user to the application """
   data =  {
     "first_name": "Sadie",
     "last_name": "Yeomans",
@@ -44,7 +44,7 @@ def test_register_success():
   )
   assert response.status_code == 201
   assert b'{"access_level":99,"address":"next county over","city":"Lawton","email":"sy0623@mail.io","first_name":"Sadie","last_name":"Yeomans","message":"SUCCESS: User successfully registered!","state":"Oklahoma","subscription_id":4,"zip_code":"73452"}\n' in response.data
-  """Ensure the provided email acquires the appropriate first and last name"""
+  """ Ensure the provided email acquires the appropriate first and last name """
   data =  {
     "email": "sy0623@mail.io",
     "password": encrypt_password('SadiePass', load_public_key())
@@ -60,7 +60,7 @@ def test_register_success():
   assert json.loads(response.data)["last_name"] == "Yeomans"
 
 def test_register_failure_dup_email():
-  """This will registration attempt will fail since there is an existing email in the users table"""
+  """ This will registration attempt will fail since there is an existing email in the users table """
   data =  {
     "first_name": "Sadie",
     "last_name": "Yeomans",

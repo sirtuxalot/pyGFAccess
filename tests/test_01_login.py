@@ -10,13 +10,13 @@ import json
 
 # support functions
 
-"""Read public key to encrypt the outgoing string"""
+""" Read public key to encrypt the outgoing string """
 def load_public_key():
   with open('keys/public_key.pem', 'rb') as pem_file:
     public_key = serialization.load_pem_public_key(pem_file.read())
   return public_key
 
-"""Encrypt the ougoing password"""
+""" Encrypt the ougoing password """
 def encrypt_password(message, public_key):
   encrypted = public_key.encrypt(message.encode('utf-8'), padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None))
   return base64.b64encode(encrypted).decode('utf-8')
@@ -24,7 +24,7 @@ def encrypt_password(message, public_key):
 # Login
 
 def test_login_success():
-  """Ensure the provided email acquires the appropriate first and last name"""
+  """ Ensure the provided email acquires the appropriate first and last name """
   data =  {
     "email": "test.user@ist412.io",
     "password": encrypt_password('TestPass', load_public_key())
@@ -40,7 +40,7 @@ def test_login_success():
   assert json.loads(response.data)["last_name"] == "User"
 
 def test_login_failure_email():
-  """This login attempt should fail due to unknown email account, but throw back an ambiguous error"""
+  """ This login attempt should fail due to unknown email account, but throw back an ambiguous error """
   data =  {
     "email": "test.user@ist412.iot",
     "password": encrypt_password('TestPass', load_public_key())
@@ -54,7 +54,7 @@ def test_login_failure_email():
   assert b'{"message":"UNAUTHORIZED: 001 - Invalid credentials provided!"}\n' in response.data
 
 def test_login_failure_password():
-  """This login attempt should fail due to a bad password, but also throw back an ambiguous error"""
+  """ This login attempt should fail due to a bad password, but also throw back an ambiguous error """
   data =  {
     "email": "test.user@ist412.io",
     "password": encrypt_password('wrong_password', load_public_key())
