@@ -223,7 +223,7 @@ def delete():
   db.session.delete(user_delete)
   db.session.commit()
   msg = {
-    'message': 'SUCCESS: Password updated.',
+    'message': 'SUCCESS: Account deleted!',
   }
   return jsonify(msg)
 
